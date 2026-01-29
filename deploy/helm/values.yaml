@@ -1,0 +1,170 @@
+# Default Helm values for Cricket Inference Service
+# Override these in custom values files or via --set flags
+
+# Deployment replica count
+replicaCount: 1
+
+# Docker image configuration
+image:
+  # Container registry (e.g., Docker Hub, ECR, ACR)
+  repository: youracr.azurecr.io/cricket-inference
+  # Image tag/version
+  tag: "1.0.0"
+  # Image pull policy
+  pullPolicy: IfNotPresent
+
+# Image pull secrets for private registries (optional)
+imagePullSecrets: []
+
+# Service configuration
+service:
+  # Service type (ClusterIP, LoadBalancer, NodePort)
+  type: ClusterIP
+  # Service port
+  port: 8000
+  # Target port on container
+  targetPort: 8000
+  # Node port (only if type is NodePort)
+  nodePort: null
+
+# Ingress configuration (optional)
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: cricket-inference.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Container port
+containerPort: 8000
+
+# Environment variables
+env:
+  # HuggingFace token (from secret)
+  - name: HF_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: hf-secret
+        key: token
+  
+  # Model repository
+  - name: MODEL_REPO
+    value: "qwe"
+  
+  # Adapter repository (private HF repo with LoRA weights)
+  - name: ADAPTER_REPO
+    value: "https://huggingface.co/riyakl09/ipl-cricket-sft/tree/main"
+  
+  # Adapter path within repo
+  - name: ADAPTER_PATH
+    value: "https://huggingface.co/riyakl09/ipl-cricket-sft/tree/main"
+  
+  # Python settings
+  - name: PYTHONUNBUFFERED
+    value: "1"
+  
+  # Server host
+  - name: HOST
+    value: "0.0.0.0"
+  
+  # Server port
+  - name: PORT
+    value: "8000"
+
+# Resource requests and limits
+resources:
+  # CPU and memory requests (guaranteed resources)
+  requests:
+    cpu: "1000m"        # 1 CPU core minimum
+    memory: "2Gi"       # 2GB RAM minimum
+  
+  # CPU and memory limits (maximum resources)
+  limits:
+    cpu: "2000m"        # 2 CPU cores maximum
+    memory: "4Gi"       # 4GB RAM maximum
+  
+  # GPU configuration (optional - for accelerated inference)
+  gpu:
+    enabled: false
+    # Uncomment to enable GPU
+    # limits:
+    #   nvidia.com/gpu: 1
+
+# Node selector (optional - for specific node pools)
+nodeSelector: {}
+
+# Tolerations for taints (optional)
+tolerations: []
+
+# Affinity rules (optional)
+affinity: {}
+
+# Liveness probe configuration
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Readiness probe configuration
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  capabilities:
+    drop:
+      - ALL
+
+# Pod annotations
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+
+# Service account
+serviceAccount:
+  create: true
+  name: cricket-inference
+  annotations: {}
+
+# Auto-scaling configuration
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Pod disruption budget
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+# Persistent storage (optional - for caching models)
+persistence:
+  enabled: false
+  # Storage class name
+  storageClassName: "standard"
+  # Access mode
+  accessMode: ReadWriteOnce
+  # Size
+  size: 10Gi
+  # Mount path
+  mountPath: /models

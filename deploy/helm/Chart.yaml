@@ -1,0 +1,22 @@
+apiVersion: v2
+name: cricket-inference
+description: >
+  Helm chart for deploying Cricket Inference Service (IPL Q&A system).
+  Includes FastAPI inference service with Phi-3-Mini fine-tuned model.
+  CPU-optimized with optional GPU support.
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://github.com/cricket-inference/helm-charts
+sources:
+  - https://github.com/cricket-inference
+maintainers:
+  - name: Cricket Inference Team
+    email: team@cricket-inference.com
+keywords:
+  - cricket
+  - inference
+  - llm
+  - ipl
+  - fastapi
+  - kubernetes
