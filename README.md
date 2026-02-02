@@ -208,6 +208,102 @@ Continuous evaluation on fixed eval set plus new curated questions. Weekly human
 **Multi-Agent Design:** RetrieverAgent (facts) → AnalystAgent (reasoning)  
 **Observability:** Per-request latency logs, token counts, P50/P95/P99 tracking
 
+## 🌍 Public API Deployment (ngrok)
+
+This project is deployed locally and exposed to the internet using **ngrok** for live testing and evaluation.
+
+---
+
+### 🔗 Public Base URL
+```
+https://southward-unrecompensed-tristin.ngrok-free.dev
+```
+
+---
+
+### 📄 API Documentation (Swagger UI)
+Interactive API testing interface:
+
+```
+https://southward-unrecompensed-tristin.ngrok-free.dev/docs
+```
+
+---
+
+### 🤖 Inference Endpoint (Main Model API)
+
+**Endpoint:**
+```
+POST /infer
+```
+
+**Full URL:**
+```
+https://southward-unrecompensed-tristin.ngrok-free.dev/infer
+```
+
+**Request Body Example:**
+```json
+{
+  "question": "Who won IPL 2020?"
+}
+```
+
+**Response Example:**
+```json
+{
+  "answer": "Mumbai Indians won IPL 2020."
+}
+```
+
+---
+
+### ❤️ Health Check Endpoint
+
+Used to verify that the server is running.
+
+```
+GET /health
+```
+
+Full URL:
+```
+https://southward-unrecompensed-tristin.ngrok-free.dev/health
+```
+
+---
+
+### 🟢 Service Status Endpoint
+
+Indicates whether the model is fully loaded and ready.
+
+```
+GET /ready
+```
+
+---
+
+### ⚠️ Note on Availability
+
+This API is hosted using ngrok (free tier).  
+The link remains active **only while the server and ngrok tunnel are running**.
+
+If the link becomes inactive, restart:
+
+```bash
+ngrok http 8000
+```
+
+---
+
+### 🧠 Service Info
+
+- **Service Name:** IPL Cricket QA  
+- **Version:** 1.0.0  
+- **Model Status:** Loaded Successfully  
+- **Framework:** FastAPI  
+
+
 ## Deliverables
 
 - scripts/train_sft.py
